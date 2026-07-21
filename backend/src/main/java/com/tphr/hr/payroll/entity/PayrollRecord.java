@@ -47,4 +47,8 @@ public class PayrollRecord extends BaseEntity {
     @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private String status = "PENDING"; // 대기, 완료 등
+
+    public void confirm() {
+        this.status = "CONFIRMED";
+    }
 }
