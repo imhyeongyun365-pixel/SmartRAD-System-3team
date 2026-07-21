@@ -42,19 +42,6 @@ public class PayrollService {
         List<PayrollRecord> calculatedRecords = new ArrayList<>();
 
         for (Employee employee : activeEmployees) {
-            Optional<PayrollRecord> optionalRecord = payrollRecordRepository.findByEmployeeIdAndPayrollYearAndPayrollMonth(employee.getId(), year, month);
-            if (optionalRecord.isPresent()) {
-                PayrollRecord existingRecord = optionalRecord.get();
-                if ("CONFIRMED".equals(existingRecord.getStatus())) {
-                    log.info("Employee {} payroll for {}/{} is already CONFIRMED. Skipping recalculation.", employee.getId(), year, month);
-                    calculatedRecords.add(existingRecord);
-                    continue;
-                }
-                payrollDetailRepository.deleteByPayrollRecordId(existingRecord.getId());
-                payrollRecordRepository.delete(existingRecord);
-                payrollRecordRepository.flush();
-            }
-
             // 1. 기본급 (실무에서는 직급/호봉 테이블 연동)
             BigDecimal baseSalary = new BigDecimal("3000000"); // 임의의 기본급 300만원
 
@@ -71,19 +58,38 @@ public class PayrollService {
             // 4. 실지급액
             BigDecimal netPay = grossSalary.subtract(totalDeduction);
 
-            // 5. 마스터(Record) 저장
-            PayrollRecord record = PayrollRecord.builder()
-                    .employee(employee)
-                    .payrollYear(year)
-                    .payrollMonth(month)
-                    .baseSalary(baseSalary)
-                    .totalAllowance(totalAllowance)
-                    .totalDeduction(totalDeduction)
-                    .netPay(netPay)
-                    .status("PENDING")
-                    .build();
-            
-            PayrollRecord savedRecord = payrollRecordRepository.save(record);
+            PayrollRecord savedRecord;
+
+            Optional<PayrollRecord> optionalRecord = payrollRecordRepository.findByEmployeeIdAndPayrollYearAndPayrollMonth(employee.getId(), year, month);
+            if (optionalRecord.isPresent()) {
+                PayrollRecord existingRecord = optionalRecord.get();
+                if ("CONFIRMED".equals(existingRecord.getStatus())) {
+                    log.info("Employee {} payroll for {}/{} is already CONFIRMED. Skipping recalculation.", employee.getId(), year, month);
+                    calculatedRecords.add(existingRecord);
+                    continue;
+                }
+                // 기존 내역 업데이트 (ID 유지)
+                existingRecord.updateCalculation(baseSalary, totalAllowance, totalDeduction, netPay);
+                savedRecord = payrollRecordRepository.save(existingRecord);
+                
+                // 상세 내역 초기화
+                payrollDetailRepository.deleteByPayrollRecordId(savedRecord.getId());
+                payrollDetailRepository.flush(); // 즉시 삭제 반영
+            } else {
+                // 신규 생성
+                PayrollRecord record = PayrollRecord.builder()
+                        .employee(employee)
+                        .payrollYear(year)
+                        .payrollMonth(month)
+                        .baseSalary(baseSalary)
+                        .totalAllowance(totalAllowance)
+                        .totalDeduction(totalDeduction)
+                        .netPay(netPay)
+                        .status("PENDING")
+                        .build();
+                savedRecord = payrollRecordRepository.save(record);
+            }
+
             calculatedRecords.add(savedRecord);
 
             // 6. 상세(Detail) 저장
@@ -96,6 +102,15 @@ public class PayrollService {
         }
 
         return calculatedRecords.stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    /**
+     * 특정 연/월의 모든 급여 대장 조회 (조회용)
+     */
+    @Transactional(readOnly = true)
+    public List<PayrollDto.Response> getPayrollList(Integer year, Integer month) {
+        List<PayrollRecord> records = payrollRecordRepository.findByPayrollYearAndPayrollMonth(year, month);
+        return records.stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 
     /**

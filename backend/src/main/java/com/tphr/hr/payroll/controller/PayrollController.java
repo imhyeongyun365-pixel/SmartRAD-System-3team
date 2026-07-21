@@ -29,6 +29,17 @@ public class PayrollController {
     }
 
     /**
+     * 특정 연/월 전 직원 급여 대장 단순 리스트 조회 (재계산 안함)
+     */
+    @GetMapping("/{year}/{month}")
+    public ResponseEntity<List<PayrollDto.Response>> getPayrollList(
+            @PathVariable Integer year,
+            @PathVariable Integer month) {
+        List<PayrollDto.Response> responses = payrollService.getPayrollList(year, month);
+        return ResponseEntity.ok(responses);
+    }
+
+    /**
      * 2. 특정 급여 대장 마감(확정)
      * @param recordId 급여 마스터(Record) ID
      */

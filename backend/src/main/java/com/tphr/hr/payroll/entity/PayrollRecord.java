@@ -51,4 +51,11 @@ public class PayrollRecord extends BaseEntity {
     public void confirm() {
         this.status = "CONFIRMED";
     }
+
+    public void updateCalculation(BigDecimal baseSalary, BigDecimal totalAllowance, BigDecimal totalDeduction, BigDecimal netPay) {
+        this.baseSalary = baseSalary;
+        this.totalAllowance = totalAllowance;
+        this.totalDeduction = totalDeduction;
+        this.netPay = netPay;
+    }
 }
