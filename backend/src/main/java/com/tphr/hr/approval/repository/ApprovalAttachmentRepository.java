@@ -11,4 +11,7 @@ public interface ApprovalAttachmentRepository extends JpaRepository<ApprovalAtta
     
     // 특정 문서의 첨부파일 목록 조회
     List<ApprovalAttachment> findByDocumentId(Long documentId);
+
+    // 특정 문서의 첨부파일 모두 삭제
+    void deleteByDocumentId(Long documentId);
 }

@@ -179,6 +179,23 @@ public class ApprovalService {
                 .build();
     }
 
+    /**
+     * 5. 결재 문서 삭제 (통과(COMPLETED)되지 않은 문서만)
+     */
+    @Transactional
+    public void deleteDocument(Long documentId) {
+        ApprovalDocument document = approvalDocumentRepository.findById(documentId)
+                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다."));
+
+        if ("COMPLETED".equals(document.getStatus())) {
+            throw new IllegalStateException("이미 최종 승인 완료된 문서는 삭제할 수 없습니다.");
+        }
+
+        approvalLineRepository.deleteByDocumentId(documentId);
+        approvalAttachmentRepository.deleteByDocumentId(documentId);
+        approvalDocumentRepository.delete(document);
+    }
+
     // --- Helper Methods ---
 
     private ApprovalDto.Response mapToResponse(ApprovalDocument doc) {

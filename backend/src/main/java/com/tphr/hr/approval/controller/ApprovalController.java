@@ -59,4 +59,13 @@ public class ApprovalController {
         ApprovalDto.DetailResponse response = approvalService.getApprovalDetail(id);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * 5. 결재 문서 삭제 (통과된 문서는 삭제 불가)
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDocument(@PathVariable Long id) {
+        approvalService.deleteDocument(id);
+        return ResponseEntity.noContent().build();
+    }
 }
