@@ -1,78 +1,125 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import DashboardSidebar from "../DashboardSidebar/DashboardSidebar";
+
+import DashboardSidebar from "@/component/dashboard/DashboardSidebar/DashboardSidebar";
 
 import styles from "./DraftDocumentsPage.module.scss";
 
-type DocumentStatus = "progress" | "done" | "rejected" | "draft";
-type DocumentType = "personnel" | "proposal" | "plan" | "request";
+type TabId = "all" | "progress" | "done" | "rejected" | "draft";
+
+type DocumentStatus = Exclude<TabId, "all">;
+
+type DocumentKind = "personnel" | "proposal" | "plan" | "request";
+
+type IconName = "document" | "progress" | "complete" | "rejected" | "draft";
+
+interface SummaryCard {
+  label: string;
+  value: string;
+  description: string;
+  tone: "purple" | "blue" | "green" | "red" | "gray";
+  icon: IconName;
+}
 
 interface DocumentItem {
   number: string;
   title: string;
   attachment: string;
-  type: string;
-  typeStyle: DocumentType;
+  kindLabel: string;
+  kind: DocumentKind;
   createdAt: string;
   approver: string;
   approverInitial?: string;
-  status: string;
-  statusStyle: DocumentStatus;
+  statusLabel: string;
+  status: DocumentStatus;
   deadline: string;
   deadlineWarning?: boolean;
+  temporary?: boolean;
 }
 
-const summaryCards = [
+const summaryCards: SummaryCard[] = [
   {
     label: "전체 기안",
     value: "47건",
     description: "전월 대비 +5건",
+    tone: "purple",
     icon: "document",
-    style: "total",
   },
   {
     label: "결재 진행중",
     value: "12건",
     description: "처리 필요 문서",
+    tone: "blue",
     icon: "progress",
-    style: "progress",
   },
   {
     label: "결재 완료",
     value: "29건",
     description: "승인율 80.2%",
+    tone: "green",
     icon: "complete",
-    style: "complete",
   },
   {
     label: "반려",
     value: "3건",
     description: "전월 대비 +1건",
-    icon: "reject",
-    style: "reject",
+    tone: "red",
+    icon: "rejected",
   },
   {
     label: "임시저장",
     value: "3건",
     description: "제출 전 임시 저장",
+    tone: "gray",
     icon: "draft",
-    style: "draft",
   },
-] as const;
+];
+
+const tabs: {
+  id: TabId;
+  label: string;
+  count: number;
+}[] = [
+  {
+    id: "all",
+    label: "전체",
+    count: 47,
+  },
+  {
+    id: "progress",
+    label: "결재중",
+    count: 12,
+  },
+  {
+    id: "done",
+    label: "완료",
+    count: 29,
+  },
+  {
+    id: "rejected",
+    label: "반려",
+    count: 3,
+  },
+  {
+    id: "draft",
+    label: "임시저장",
+    count: 3,
+  },
+];
 
 const documentItems: DocumentItem[] = [
   {
     number: "2025-047",
     title: "2025년 6월 인사발령 요청의 건",
     attachment: "첨부 3건",
-    type: "인사발령",
-    typeStyle: "personnel",
+    kindLabel: "인사발령",
+    kind: "personnel",
     createdAt: "2025.06.25 09:14",
     approver: "박부장 외 2명",
     approverInitial: "박",
-    status: "결재중",
-    statusStyle: "progress",
+    statusLabel: "결재중",
+    status: "progress",
     deadline: "2025.06.27",
     deadlineWarning: true,
   },
@@ -80,83 +127,135 @@ const documentItems: DocumentItem[] = [
     number: "2025-046",
     title: "6월 연장근로 수당 지급 품의",
     attachment: "첨부 1건",
-    type: "품의서",
-    typeStyle: "proposal",
+    kindLabel: "품의서",
+    kind: "proposal",
     createdAt: "2025.06.24 14:30",
     approver: "이팀장 외 1명",
     approverInitial: "이",
-    status: "완료",
-    statusStyle: "done",
+    statusLabel: "완료",
+    status: "done",
     deadline: "2025.06.26",
   },
   {
     number: "2025-045",
     title: "신규 직원 채용 계획서 (2025 하반기)",
     attachment: "첨부 5건",
-    type: "계획서",
-    typeStyle: "plan",
+    kindLabel: "계획서",
+    kind: "plan",
     createdAt: "2025.06.23 11:05",
     approver: "최원장 외 3명",
     approverInitial: "최",
-    status: "결재중",
-    statusStyle: "progress",
+    statusLabel: "결재중",
+    status: "progress",
     deadline: "2025.06.30",
   },
   {
     number: "2025-044",
     title: "직원 휴직 및 복직 처리 요청",
     attachment: "첨부 2건",
-    type: "인사발령",
-    typeStyle: "personnel",
+    kindLabel: "인사발령",
+    kind: "personnel",
     createdAt: "2025.06.20 16:45",
     approver: "박부장",
     approverInitial: "박",
-    status: "반려",
-    statusStyle: "rejected",
+    statusLabel: "반려",
+    status: "rejected",
     deadline: "2025.06.22",
   },
   {
     number: "2025-043",
     title: "간호사 면허 갱신 지원비 지급 품의",
     attachment: "첨부 없음",
-    type: "품의서",
-    typeStyle: "proposal",
+    kindLabel: "품의서",
+    kind: "proposal",
     createdAt: "2025.06.18 10:22",
     approver: "이팀장 외 2명",
     approverInitial: "이",
-    status: "완료",
-    statusStyle: "done",
+    statusLabel: "완료",
+    status: "done",
     deadline: "2025.06.20",
   },
   {
     number: "2025-042",
     title: "의료기기 점검 일정 조율 요청서 (임시저장)",
     attachment: "임시저장 중",
-    type: "요청서",
-    typeStyle: "request",
+    kindLabel: "요청서",
+    kind: "request",
     createdAt: "2025.06.17 (미완성)",
     approver: "-",
-    status: "임시저장",
-    statusStyle: "draft",
+    statusLabel: "임시저장",
+    status: "draft",
     deadline: "-",
+    temporary: true,
   },
 ];
 
-const tabs = [
-  { id: "all", label: "전체", count: 47 },
-  { id: "progress", label: "결재중", count: 12 },
-  { id: "done", label: "완료", count: 29 },
-  { id: "rejected", label: "반려", count: 3 },
-  { id: "draft", label: "임시저장", count: 3 },
-] as const;
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4 4" />
+    </svg>
+  );
+}
 
-type TabId = (typeof tabs)[number]["id"];
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 4v10" />
+      <path d="m8 10 4 4 4-4" />
+      <path d="M5 19h14" />
+    </svg>
+  );
+}
 
-function SummaryIcon({
-  name,
-}: {
-  name: (typeof summaryCards)[number]["icon"];
-}) {
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="4" y="5" width="16" height="15" rx="2" />
+      <path d="M8 3v4M16 3v4M4 10h16" />
+    </svg>
+  );
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="2.5" />
+    </svg>
+  );
+}
+
+function EditIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m5 16-1 4 4-1L18 9l-3-3Z" />
+      <path d="m13.5 7.5 3 3" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 7h14" />
+      <path d="M9 7V4h6v3" />
+      <path d="m7 7 1 13h8l1-13" />
+      <path d="M10 11v5M14 11v5" />
+    </svg>
+  );
+}
+
+function SummaryIcon({ name }: { name: IconName }) {
   if (name === "document") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -179,12 +278,12 @@ function SummaryIcon({
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="8" />
-        <path d="m8.5 12 2.2 2.2 4.8-5" />
+        <path d="m8.5 12 2.3 2.3 4.8-5" />
       </svg>
     );
   }
 
-  if (name === "reject") {
+  if (name === "rejected") {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="8" />
@@ -196,7 +295,8 @@ function SummaryIcon({
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M6 3h9l3 3v15H6z" />
-      <path d="M14 3v4h4M9 16l5-5 2 2-5 5H9z" />
+      <path d="M14 3v4h4" />
+      <path d="m9 16 5-5 2 2-5 5H9z" />
     </svg>
   );
 }
@@ -206,17 +306,16 @@ export default function DraftDocumentsPage() {
   const [keyword, setKeyword] = useState("");
 
   const filteredDocuments = useMemo(() => {
-    return documentItems.filter((document) => {
-      const matchesTab =
-        activeTab === "all" || document.statusStyle === activeTab;
+    const normalizedKeyword = keyword.trim().toLowerCase();
 
-      const normalizedKeyword = keyword.trim().toLowerCase();
+    return documentItems.filter((document) => {
+      const matchesTab = activeTab === "all" || document.status === activeTab;
 
       const matchesKeyword =
         normalizedKeyword.length === 0 ||
-        document.title.toLowerCase().includes(normalizedKeyword) ||
         document.number.toLowerCase().includes(normalizedKeyword) ||
-        document.type.toLowerCase().includes(normalizedKeyword);
+        document.title.toLowerCase().includes(normalizedKeyword) ||
+        document.kindLabel.toLowerCase().includes(normalizedKeyword);
 
       return matchesTab && matchesKeyword;
     });
@@ -229,10 +328,7 @@ export default function DraftDocumentsPage() {
       <div className={styles.pageArea}>
         <header className={styles.topHeader}>
           <label className={styles.globalSearch}>
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="m16.5 16.5 4 4" />
-            </svg>
+            <SearchIcon />
 
             <input type="search" placeholder="직원, 부서, 문서를 검색하세요" />
           </label>
@@ -256,12 +352,12 @@ export default function DraftDocumentsPage() {
 
             <div className={styles.headerActions}>
               <button type="button" className={styles.excelButton}>
-                <span>⇩</span>
+                <DownloadIcon />
                 엑셀 다운로드
               </button>
 
               <button type="button" className={styles.newDocumentButton}>
-                <span>＋</span>새 문서 기안
+                <PlusIcon />새 문서 기안
               </button>
             </div>
           </section>
@@ -269,23 +365,23 @@ export default function DraftDocumentsPage() {
           <section className={styles.summaryGrid}>
             {summaryCards.map((card) => (
               <article key={card.label} className={styles.summaryCard}>
-                <div>
+                <div className={styles.summaryContent}>
                   <p>{card.label}</p>
                   <h2>{card.value}</h2>
 
-                  <span className={styles[`${card.style}Description`]}>
-                    {card.style === "total" && "↗ "}
-                    {card.style === "progress" && "◷ "}
-                    {card.style === "complete" && "↗ "}
-                    {card.style === "reject" && "↘ "}
-                    {card.style === "draft" && "▣ "}
+                  <span className={styles[`${card.tone}Description`]}>
+                    {card.tone === "purple" && "↗ "}
+                    {card.tone === "blue" && "◷ "}
+                    {card.tone === "green" && "↗ "}
+                    {card.tone === "red" && "↘ "}
+                    {card.tone === "gray" && "▣ "}
                     {card.description}
                   </span>
                 </div>
 
                 <span
                   className={`${styles.summaryIcon} ${
-                    styles[`${card.style}Icon`]
+                    styles[`${card.tone}Icon`]
                   }`}
                 >
                   <SummaryIcon name={card.icon} />
@@ -313,16 +409,13 @@ export default function DraftDocumentsPage() {
 
               <div className={styles.toolbar}>
                 <button type="button" className={styles.dateButton}>
-                  <span>▣</span>
-                  2025.01.01 ~ 2025.06.30
+                  <CalendarIcon />
+                  <span>2025.01.01 ~ 2025.06.30</span>
                   <b>⌄</b>
                 </button>
 
                 <label className={styles.documentSearch}>
-                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m16.5 16.5 4 4" />
-                  </svg>
+                  <SearchIcon />
 
                   <input
                     type="search"
@@ -350,13 +443,16 @@ export default function DraftDocumentsPage() {
                 </thead>
 
                 <tbody>
-                  {filteredDocuments.map((document) => (
-                    <tr key={document.number}>
+                  {filteredDocuments.map((document, index) => (
+                    <tr
+                      key={document.number}
+                      className={index === 0 ? styles.selectedRow : ""}
+                    >
                       <td className={styles.documentNumber}>
                         {document.number}
                       </td>
 
-                      <td>
+                      <td className={styles.documentTitle}>
                         <strong>{document.title}</strong>
                         <small>{document.attachment}</small>
                       </td>
@@ -364,10 +460,10 @@ export default function DraftDocumentsPage() {
                       <td>
                         <span
                           className={`${styles.typeBadge} ${
-                            styles[document.typeStyle]
+                            styles[document.kind]
                           }`}
                         >
-                          {document.type}
+                          {document.kindLabel}
                         </span>
                       </td>
 
@@ -386,11 +482,11 @@ export default function DraftDocumentsPage() {
                       <td>
                         <span
                           className={`${styles.statusBadge} ${
-                            styles[document.statusStyle]
+                            styles[document.status]
                           }`}
                         >
                           <i />
-                          {document.status}
+                          {document.statusLabel}
                         </span>
                       </td>
 
@@ -403,16 +499,33 @@ export default function DraftDocumentsPage() {
                       </td>
 
                       <td>
-                        <button
-                          type="button"
-                          className={styles.viewButton}
-                          aria-label={`${document.title} 상세보기`}
-                        >
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                            <circle cx="12" cy="12" r="2.5" />
-                          </svg>
-                        </button>
+                        <div className={styles.management}>
+                          {document.temporary ? (
+                            <>
+                              <button
+                                type="button"
+                                aria-label={`${document.title} 수정`}
+                              >
+                                <EditIcon />
+                              </button>
+
+                              <button
+                                type="button"
+                                className={styles.deleteButton}
+                                aria-label={`${document.title} 삭제`}
+                              >
+                                <TrashIcon />
+                              </button>
+                            </>
+                          ) : (
+                            <button
+                              type="button"
+                              aria-label={`${document.title} 상세보기`}
+                            >
+                              <EyeIcon />
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -430,8 +543,11 @@ export default function DraftDocumentsPage() {
 
             <div className={styles.tableFooter}>
               <p>
-                총 47건 중 {filteredDocuments.length === 0 ? 0 : 1}-
-                {filteredDocuments.length} 표시
+                총 47건 중{" "}
+                {filteredDocuments.length > 0
+                  ? `1-${filteredDocuments.length}`
+                  : "0"}
+                표시
               </p>
 
               <div className={styles.pagination}>
