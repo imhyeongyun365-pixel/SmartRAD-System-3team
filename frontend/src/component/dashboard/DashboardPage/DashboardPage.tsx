@@ -1,5 +1,8 @@
-import Link from "next/link";
+"use client";
+
+import DashboardSidebar from "../DashboardSidebar/DashboardSidebar";
 import styles from "./DashboardPage.module.scss";
+import { useState, useEffect } from "react";
 
 const summaryCards = [
   {
@@ -112,55 +115,33 @@ const myApprovals = [
 ];
 
 export default function DashboardPage() {
+  const [todayText, setTodayText] = useState("");
+
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const date = now.getDate();
+
+      const week = ["일", "월", "화", "수", "목", "금", "토"];
+      const day = week[now.getDay()];
+
+      setTodayText(`${year}년 ${month}월 ${date}일 ${day}요일`);
+    };
+
+    updateDate(); // 처음 한 번 실행
+
+    // 자정이 지나면 자동으로 날짜가 바뀌도록 (선택사항)
+    const timer = setInterval(updateDate, 60 * 1000); // 1분마다 체크
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className={styles.dashboard}>
-      <aside className={styles.sidebar}>
-        <Link href="/" className={styles.brand}>
-          <span className={styles.brandSymbol}>＋</span>
-          <span>
-            <strong>SmartRAD HR</strong>
-            <small>Hospital Human Resources</small>
-          </span>
-        </Link>
-
-        <nav className={styles.sideNav}>
-          <p>MAIN MENU</p>
-
-          <Link
-            href="/dashboard"
-            className={`${styles.sideLink} ${styles.active}`}
-          >
-            <span>▦</span>
-            대시보드
-          </Link>
-
-          <button type="button" className={styles.sideLink}>
-            <span>▤</span>
-            전자결재
-            <b>⌄</b>
-          </button>
-
-          <button type="button" className={styles.sideLink}>
-            <span>♙</span>
-            인사관리
-            <b>⌄</b>
-          </button>
-
-          <button type="button" className={styles.sideLink}>
-            <span>▣</span>
-            급여관리
-            <b>⌄</b>
-          </button>
-
-          <p>ADMIN</p>
-
-          <button type="button" className={styles.sideLink}>
-            <span>⚙</span>
-            시스템 관리
-            <b>⌄</b>
-          </button>
-        </nav>
-      </aside>
+      <DashboardSidebar />
 
       <div className={styles.pageArea}>
         <header className={styles.topHeader}>
@@ -190,7 +171,7 @@ export default function DashboardPage() {
             </div>
             <div className={styles.today}>
               <small>오늘</small>
-              <strong>2026년 7월 13일 월요일</strong>
+              <strong>{todayText || "날짜 불러오는 중..."}</strong>
             </div>
           </section>
 
