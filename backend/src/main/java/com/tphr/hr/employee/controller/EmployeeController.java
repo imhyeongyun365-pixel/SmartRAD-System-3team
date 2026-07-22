@@ -58,4 +58,10 @@ public class EmployeeController {
                                                                  @Valid @RequestBody AccountStatusUpdateRequest request) {
         return ResponseEntity.ok(employeeService.updateAccountStatus(id, request));
     }
+
+    // POST /employees/{id}/issue-account - 관리자가 기존 사원의 계정(비밀번호)을 발급/초기화
+    @PostMapping("/{id}/issue-account")
+    public ResponseEntity<AccountIssueResponse> issueAccount(@PathVariable Long id) {
+        return ResponseEntity.ok(employeeService.issueAccount(id));
+    }
 }

@@ -33,8 +33,8 @@ public class EmployeeService {
     private final DepartmentRepository departmentRepository;
     private final CommonCodeRepository commonCodeRepository;
     private final RoleGroupRepository roleGroupRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
 
     // POST /employees - 직원 등록 (기본 인적사항 + 계정 생성, 초기 비밀번호 자동 발급)
@@ -136,6 +136,18 @@ public class EmployeeService {
         Employee employee = getEmployeeEntity(id);
         employee.changeAccountStatus(request.accountStatus());
         return EmployeeResponse.from(employee);
+    }
+
+    // POST /employees/{id}/issue-account - 계정 발급 (초기 비밀번호 생성/초기화)
+    @Transactional
+    public AccountIssueResponse issueAccount(Long id) {
+        Employee employee = getEmployeeEntity(id);
+        
+        // 새로운 초기 비밀번호 생성
+        String rawPassword = generateInitialPassword();
+        employee.changePassword(passwordEncoder.encode(rawPassword));
+        
+        return new AccountIssueResponse(employee.getId(), employee.getEmpNo(), rawPassword);
     }
 
     Employee getEmployeeEntity(Long id) {
