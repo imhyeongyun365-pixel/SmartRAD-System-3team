@@ -136,7 +136,7 @@
   box-shadow: 0 12px 25px rgba($color-blue-700, 0.25);
 }
 
-/* 전자결재 활성 상태 */
+/* 활성 상태 */
 .groupActive {
   color: $color-surface;
   background: rgba($color-surface, 0.12);
@@ -192,7 +192,7 @@
   transform: rotate(180deg);
 }
 
-/* 전자결재 하위 메뉴 닫힘 */
+/* 하위 메뉴 닫힘 */
 .subMenu {
   max-height: 0;
 
@@ -241,10 +241,9 @@
   }
 }
 
-/* 전자결재 하위 메뉴 열림 */
+/* 하위 메뉴 열림 */
 .subMenuOpen {
-  max-height: 100px;
-
+  max-height: 360px;
   padding-top: 5px;
   padding-bottom: 5px;
 

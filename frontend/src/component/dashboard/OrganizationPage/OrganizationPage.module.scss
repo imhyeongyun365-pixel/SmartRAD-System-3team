@@ -1,0 +1,675 @@
+@use "@/styles/variables" as *;
+
+/* ===== 공통 (직원관리와 동일) ===== */
+.dashboard {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: $dashboard-sidebar-width minmax(0, 1fr);
+  background: #edf3f9;
+}
+
+.pageArea {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topHeader {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: linear-gradient(90deg, #194783, #0f2f69);
+  color: white;
+}
+
+.globalSearch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(480px, 50%);
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+
+  input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: white;
+    outline: none;
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+  }
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notifBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.userChip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+
+  strong {
+    display: block;
+    font-size: 14px;
+  }
+  small {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12px;
+  }
+}
+
+.userAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3a7bff, #2155d9);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* ===== 메인 ===== */
+.main {
+  padding: 24px;
+  overflow-y: auto;
+  height: calc(100svh - 72px);
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111c33;
+    margin: 0 0 4px;
+  }
+  p {
+    font-size: 14px;
+    color: #8a97ad;
+    margin: 0;
+  }
+}
+
+.pageActions {
+  display: flex;
+  gap: 10px;
+}
+
+.primaryBtn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #3a7bff, #2155d9);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(33, 85, 217, 0.25);
+}
+
+.outlineBtn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #dce5f3;
+  background: #fff;
+  color: #3a5a8c;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover {
+    background: #f7faff;
+  }
+}
+
+/* 요약 카드 */
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.summaryCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #8a97ad;
+    margin-bottom: 2px;
+  }
+  p {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111c33;
+    margin: 0;
+    span {
+      font-size: 13px;
+      font-weight: 500;
+      color: #8a97ad;
+      margin-left: 2px;
+    }
+  }
+}
+
+.summaryIconBlue,
+.summaryIconGreen,
+.summaryIconOrange,
+.summaryIconPurple {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.summaryIconBlue {
+  background: #e8f0ff;
+}
+.summaryIconGreen {
+  background: #e6f9f0;
+}
+.summaryIconOrange {
+  background: #fff4e5;
+}
+.summaryIconPurple {
+  background: #f3e8ff;
+}
+
+/* 조직도 */
+.orgChartSection {
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111c33;
+    margin: 0 0 4px;
+  }
+  p {
+    font-size: 13px;
+    color: #8a97ad;
+    margin: 0;
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #8a97ad;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.dotBlue,
+.dotGreen,
+.dotGray {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.dotBlue {
+  background: #3a7bff;
+}
+.dotGreen {
+  background: #35d59a;
+}
+.dotGray {
+  background: #c5d0e0;
+}
+
+.orgChart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.orgRoot {
+  margin-bottom: 8px;
+}
+
+.orgNodeRoot {
+  padding: 12px 28px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #3a7bff, #2155d9);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(33, 85, 217, 0.25);
+
+  span {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+}
+
+.orgConnector {
+  width: 2px;
+  height: 20px;
+  background: #d0d8e8;
+}
+
+.orgLevel {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.orgNodeDept {
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: #e8f0ff;
+  border: 1px solid #c5d8ff;
+  color: #2155d9;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 120px;
+
+  span {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: #68748a;
+    margin-top: 2px;
+  }
+}
+
+.orgSubLevel {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+}
+
+.orgSubGroup {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 320px;
+}
+
+.orgNode {
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #f5f8fc;
+  border: 1px solid #e4eaf3;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3a5a8c;
+  text-align: center;
+
+  span {
+    display: block;
+    font-size: 11px;
+    color: #9aa8bc;
+    margin-top: 1px;
+  }
+}
+
+/* 하단 레이아웃 */
+.bottomLayout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.deptListBox {
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.deptListHeader {
+  padding: 16px;
+  border-bottom: 1px solid #f0f4f9;
+
+  h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111c33;
+    margin: 0 0 10px;
+  }
+}
+
+.deptSearch input {
+  width: 100%;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #e4eaf3;
+  font-size: 13px;
+  outline: none;
+  &:focus {
+    border-color: #3a7bff;
+  }
+}
+
+.deptList {
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.deptItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #f5f8fc;
+  }
+}
+
+.deptItemActive {
+  background: #f0f5ff !important;
+  box-shadow: 0 0 0 1px #3a7bff;
+}
+
+.deptParent {
+  font-weight: 600;
+}
+
+.deptName {
+  font-size: 13px;
+  color: #111c33;
+}
+
+.deptCount {
+  font-size: 12px;
+  color: #9aa8bc;
+}
+
+/* 부서 상세 */
+.deptDetailBox {
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.deptDetailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.deptDetailTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 2px;
+    color: #111c33;
+  }
+  p {
+    font-size: 12px;
+    color: #8a97ad;
+    margin: 0;
+  }
+}
+
+.deptIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #e8f0ff;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+
+.deptInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #8a97ad;
+    margin-bottom: 2px;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #111c33;
+    margin: 0;
+  }
+}
+
+.deptDesc {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: #f8fafd;
+  border-radius: 10px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #8a97ad;
+    margin-bottom: 4px;
+  }
+  p {
+    font-size: 13px;
+    color: #3a5a8c;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.deptChild {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: #8a97ad;
+    margin-bottom: 8px;
+  }
+}
+
+.childTags {
+  display: flex;
+  gap: 8px;
+
+  span {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: #f0f4f9;
+    color: #3a5a8c;
+  }
+}
+
+.memberSection {
+  border-top: 1px solid #f0f4f9;
+  padding-top: 16px;
+}
+
+.memberHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111c33;
+    margin: 0;
+  }
+}
+
+.linkBtn {
+  border: none;
+  background: transparent;
+  color: #2155d9;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.memberTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 10px 8px;
+    color: #8a97ad;
+    font-weight: 600;
+    border-bottom: 1px solid #e8eef6;
+  }
+  td {
+    padding: 12px 8px;
+    color: #111c33;
+    border-bottom: 1px solid #f0f4f9;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.memberName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memberAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+}
+
+.blue {
+  background: linear-gradient(135deg, #3a7bff, #2155d9);
+}
+.green {
+  background: linear-gradient(135deg, #35d59a, #1aaa6e);
+}
+.purple {
+  background: linear-gradient(135deg, #a78bfa, #7c3aed);
+}
+.orange {
+  background: linear-gradient(135deg, #fb923c, #ea580c);
+}
+
+.statusBadge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.active {
+  background: #dffaf0;
+  color: #0f9f6e;
+}
+
+.statusLeader {
+  background: #fff4e5;
+  color: #c47a00;
+}
+
+@media (max-width: 1100px) {
+  .summaryRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .bottomLayout {
+    grid-template-columns: 1fr;
+  }
+  .orgLevel {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
