@@ -38,12 +38,25 @@ public class CommonCodeService {
     }
 
     // GET /common-codes?groupCode=POS - 그룹별 조회. includeInactive=false면 사용중인 코드만 반환(드롭다운용)
+    // groupCode가 null이거나 빈 문자열이면 전체 코드를 조회합니다.
     public List<CommonCodeResponse> getCommonCodes(String groupCode, boolean includeInactive) {
+        if (groupCode == null || groupCode.isBlank()) {
+            List<CommonCode> allCodes = includeInactive
+                    ? commonCodeRepository.findAll()
+                    : commonCodeRepository.findAll().stream().filter(CommonCode::getIsActive).toList();
+            return allCodes.stream().map(CommonCodeResponse::from).toList();
+        }
+
         List<CommonCode> codes = includeInactive
                 ? commonCodeRepository.findByGroupCodeOrderBySortOrderAscCodeAsc(groupCode)
                 : commonCodeRepository.findByGroupCodeAndIsActiveTrue(groupCode);
 
         return codes.stream().map(CommonCodeResponse::from).toList();
+    }
+
+    // GET /common-codes/groups - 전체 그룹 코드 목록 조회
+    public List<String> getGroupCodes() {
+        return commonCodeRepository.findDistinctGroupCodes();
     }
 
     // GET /common-codes/{code} - 단건 조회

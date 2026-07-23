@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import DashboardSidebar from "../DashboardSidebar/DashboardSidebar";
+import DashboardHeader from "../DashboardHeader/DashboardHeader";
 
 import type { DashboardData } from "@/types/dashboard";
 
@@ -54,25 +55,8 @@ export default function DashboardPage({ initialData }: DashboardPageProps) {
       <DashboardSidebar />
 
       <div className={styles.pageArea}>
-        {/* 기존 상단 헤더 */}
-        <header className={styles.topHeader}>
-          <label className={styles.search}>
-            <span>⌕</span>
-
-            <input type="search" placeholder="직원, 부서, 문서를 검색하세요" />
-          </label>
-
-          <div className={styles.profile}>
-            <span>{profile.initial}</span>
-
-            <div>
-              <strong>{profile.name}</strong>
-              <small>
-                {profile.department} · {profile.role}
-              </small>
-            </div>
-          </div>
-        </header>
+        {/* 상단 헤더 */}
+        <DashboardHeader profile={profile} />
 
         <main className={styles.main}>
           <section className={styles.welcome}>

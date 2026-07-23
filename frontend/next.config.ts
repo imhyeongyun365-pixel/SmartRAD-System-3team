@@ -5,10 +5,19 @@ const nextConfig: NextConfig = {
   // reactStrictMode: true,
   // devIndicators: false,
   async rewrites() {
+    const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
     return [
       {
         source: "/api/:path*",
-        destination: "http://localhost:8080/api/:path*", // 백엔드 포트에 맞게 수정
+        destination: `${backendUrl}/api/:path*`,
+      },
+      {
+        source: "/common-codes/:path*",
+        destination: `${backendUrl}/common-codes/:path*`,
+      },
+      {
+        source: "/common-codes",
+        destination: `${backendUrl}/common-codes`,
       },
     ];
   },

@@ -25,10 +25,16 @@ public class CommonCodeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commonCodeService.createCommonCode(request));
     }
 
+    // GET /common-codes/groups - 전체 그룹 코드 목록 조회
+    @GetMapping("/groups")
+    public ResponseEntity<List<String>> getGroupCodes() {
+        return ResponseEntity.ok(commonCodeService.getGroupCodes());
+    }
+
     // GET /common-codes?groupCode=POS&includeInactive=false - 그룹별 조회
     @GetMapping
     public ResponseEntity<List<CommonCodeResponse>> getCommonCodes(
-            @RequestParam String groupCode,
+            @RequestParam(required = false) String groupCode,
             @RequestParam(defaultValue = "false") boolean includeInactive) {
         return ResponseEntity.ok(commonCodeService.getCommonCodes(groupCode, includeInactive));
     }
