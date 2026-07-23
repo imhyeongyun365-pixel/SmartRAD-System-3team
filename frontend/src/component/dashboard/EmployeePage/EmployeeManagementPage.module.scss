@@ -1387,3 +1387,163 @@
   margin: 0;
   padding-left: 4px;
 }
+
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1080px;
+}
+.createHeader {
+  h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    color: #111c33;
+  }
+  p {
+    margin: 0;
+    color: #8a97ad;
+    font-size: 14px;
+  }
+}
+.createCard {
+  background: #fff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  padding: 20px;
+}
+.createCardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  h2 {
+    margin: 0;
+    font-size: 16px;
+  }
+  em {
+    margin-left: auto;
+    font-style: normal;
+    font-size: 12px;
+    color: #9aa8bc;
+  }
+}
+.createBadgeBlue,
+.createBadgeGreen,
+.createBadgePurple {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+.createBadgeBlue {
+  background: #e8f0ff;
+}
+.createBadgeGreen {
+  background: #e6f9f0;
+}
+.createBadgePurple {
+  background: #f3e8ff;
+}
+
+.createGrid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.createGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.createField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: #3a5a8c;
+  margin-bottom: 8px;
+  span b {
+    color: #e14d55;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+  input,
+  select {
+    height: 42px;
+    border: 1px solid #e4eaf3;
+    border-radius: 10px;
+    padding: 0 12px;
+    background: #f8fafd;
+    outline: none;
+    &:focus {
+      border-color: #3a7bff;
+      background: #fff;
+    }
+  }
+}
+.segment {
+  display: flex;
+  gap: 8px;
+}
+.segment button {
+  flex: 1;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #e4eaf3;
+  background: #f8fafd;
+  cursor: pointer;
+}
+.segActive {
+  background: #e8f0ff !important;
+  border-color: #3a7bff !important;
+  color: #2155d9;
+  font-weight: 600;
+}
+.formError {
+  color: #e14d55;
+  font-size: 13px;
+  margin: 0;
+}
+.createNote {
+  font-size: 12px;
+  color: #9aa8bc;
+  margin: 0;
+}
+.createActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 12px;
+}
+.cancelBtn {
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 12px;
+  border: 1px solid #e4eaf3;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+.submitBtn {
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #3a7bff, #2155d9);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+@media (max-width: 900px) {
+  .createGrid2,
+  .createGrid3 {
+    grid-template-columns: 1fr;
+  }
+}
