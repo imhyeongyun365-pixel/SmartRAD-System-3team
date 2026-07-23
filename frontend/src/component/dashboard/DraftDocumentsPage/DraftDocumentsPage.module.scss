@@ -774,15 +774,13 @@
 
 @media (max-width: 1000px) {
   .dashboard {
-    grid-template-columns:
-      $dashboard-sidebar-collapsed-width
-      minmax(0, 1fr);
+    grid-template-columns: 220px minmax(0, 1fr);
   }
 }
 
 @media (max-width: 800px) {
   .dashboard {
-    display: block;
+    grid-template-columns: 200px minmax(0, 1fr);
   }
 
   .topHeader {

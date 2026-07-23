@@ -1,0 +1,610 @@
+@use "../../../styles/variables" as *;
+
+.dashboard {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  background: $color-surface-soft;
+}
+
+.pageArea {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topHeader {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 28px;
+  background: linear-gradient(90deg, #1d4a84, $color-navy-900);
+}
+
+.search {
+  width: min(420px, 50%);
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: 16px;
+  border: 1px solid rgba($color-surface, 0.18);
+  border-radius: $radius-sm;
+  background: rgba($color-surface, 0.1);
+
+  > span {
+    color: rgba($color-surface, 0.75);
+    font-size: 1.25rem;
+  }
+
+  input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: $color-surface;
+    background: transparent;
+
+    &::placeholder {
+      color: rgba($color-surface, 0.58);
+    }
+  }
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: $color-surface;
+
+  > span {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color-blue-500;
+    border-radius: $radius-sm;
+    font-weight: 600;
+  }
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  strong {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  small {
+    font-size: 0.8rem;
+    color: rgba($color-surface, 0.75);
+  }
+}
+
+// 본문 영역
+.mainContent {
+  flex: 1;
+  padding: 32px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pageHeader {
+  .subtitle {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $color-blue-600;
+    margin-bottom: 4px;
+  }
+  .title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $color-navy-900;
+    margin-bottom: 8px;
+  }
+  .description {
+    color: $color-muted;
+    font-size: 0.95rem;
+  }
+}
+
+// 2-Pane 레이아웃
+.contentLayout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  flex: 1;
+  min-height: 0; // for scrolling inner contents if needed
+}
+
+// 좌측 패널 (그룹 리스트)
+.leftPanel {
+  flex: 1 1 300px;
+  max-width: 320px;
+  background: $color-surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (max-width: 1100px) {
+    max-width: 100%;
+    width: 100%;
+    height: 280px;
+    flex: none;
+  }
+
+  .panelHeader {
+    padding: 24px 24px 16px;
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $color-navy-800;
+    }
+  }
+
+  .groupSearch {
+    padding: 0 24px 16px;
+    label {
+      display: flex;
+      align-items: center;
+      background: $color-surface-soft;
+      border-radius: $radius-md;
+      padding: 10px 14px;
+      gap: 8px;
+
+      span {
+        color: $color-muted;
+      }
+      input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        color: $color-text;
+      }
+    }
+  }
+
+  .groupList {
+    list-style: none;
+    padding: 0 12px 12px;
+    margin: 0;
+    overflow-y: auto;
+    
+    li {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-radius: $radius-md;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 4px;
+
+      &:hover {
+        background: $color-surface-soft;
+      }
+
+      &.active {
+        background: $color-blue-500;
+        color: $color-surface;
+
+        .groupIcon {
+          background: rgba($color-surface, 0.2);
+          color: $color-surface;
+        }
+
+        .groupInfo {
+          strong { color: $color-surface; }
+          small { color: rgba($color-surface, 0.8); }
+        }
+
+        .arrow { color: $color-surface; }
+      }
+    }
+
+    .groupIcon {
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-sm;
+      background: $color-surface-soft;
+      color: $color-blue-600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      margin-right: 16px;
+    }
+
+    .groupInfo {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      strong {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: $color-navy-800;
+      }
+      small {
+        font-size: 0.8rem;
+        color: $color-muted;
+      }
+    }
+
+    .arrow {
+      color: $color-border;
+      font-size: 1.2rem;
+    }
+  }
+}
+
+// 우측 패널 (상세 목록)
+.rightPanel {
+  flex: 3 1 500px;
+  min-width: 0;
+  background: $color-surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (max-width: 1100px) {
+    width: 100%;
+    height: 600px;
+    flex: none;
+  }
+
+  .panelHeader {
+    padding: 24px 32px;
+    border-bottom: 1px solid $color-border;
+
+    .breadcrumbs {
+      font-size: 0.85rem;
+      color: $color-muted;
+      margin-bottom: 8px;
+      strong {
+        color: $color-blue-600;
+      }
+    }
+
+    .rightHeaderAction {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $color-navy-900;
+      }
+
+      .btnAdd {
+        background: $color-blue-500;
+        color: $color-surface;
+        border: none;
+        border-radius: $radius-md;
+        padding: 10px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+
+        &:hover {
+          background: $color-blue-600;
+        }
+      }
+    }
+  }
+
+  .tableWrapper {
+    flex: 1;
+    overflow: auto;
+  }
+}
+
+// 공통 테이블
+.codeTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 16px 32px;
+    text-align: left;
+    border-bottom: 1px solid $color-surface-soft;
+  }
+
+  th {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $color-muted;
+    background: $color-surface;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  td {
+    font-size: 0.95rem;
+    color: $color-text;
+    vertical-align: middle;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #f0f4f8;
+    color: $color-blue-600;
+    border-radius: $radius-sm;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .codeName {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .nameIcon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #eef2ff;
+      color: $color-blue-500;
+      font-size: 0.8rem;
+    }
+
+    strong {
+      color: $color-navy-800;
+      font-weight: 600;
+    }
+  }
+
+  .textGray {
+    color: $color-muted;
+    font-size: 0.9rem;
+  }
+
+  .btnEdit {
+    background: transparent;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
+    width: 32px;
+    height: 32px;
+    color: $color-muted;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $color-surface-soft;
+      color: $color-navy-800;
+    }
+  }
+
+  .emptyState {
+    text-align: center;
+    padding: 60px;
+    color: $color-muted;
+  }
+}
+
+// 토글 스위치 (활성화/비활성화)
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: $color-blue-500;
+    }
+
+    &:checked + .slider:before {
+      transform: translateX(20px);
+    }
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+  }
+}
+
+// 모달 (Modal)
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modalContent {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  width: 480px;
+  box-shadow: $shadow-float;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid $color-border;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $color-navy-900;
+    margin: 0;
+  }
+
+  .btnClose {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: $color-muted;
+    cursor: pointer;
+  }
+}
+
+.modalForm {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $color-navy-800;
+  }
+
+  input, textarea {
+    padding: 12px 16px;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+
+    &:focus {
+      border-color: $color-blue-500;
+    }
+  }
+
+  .inputDisabled {
+    background: $color-surface-soft;
+    color: $color-muted;
+  }
+}
+
+.formGroupHorizontal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid $color-surface-soft;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: $color-navy-800;
+    }
+    small {
+      font-size: 0.8rem;
+      color: $color-muted;
+    }
+  }
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+
+  button {
+    padding: 12px 24px;
+    border-radius: $radius-md;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btnCancel {
+    background: transparent;
+    border: 1px solid $color-border;
+    color: $color-text;
+
+    &:hover {
+      background: $color-surface-soft;
+    }
+  }
+
+  .btnSave {
+    background: $color-blue-500;
+    border: none;
+    color: $color-surface;
+
+    &:hover {
+      background: $color-blue-600;
+    }
+
+    &:disabled {
+      background: $color-border;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .dashboard {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+}

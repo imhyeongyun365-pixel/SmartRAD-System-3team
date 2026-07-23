@@ -108,9 +108,13 @@ export default function DashboardSidebar() {
     setIsApprovalOpen(isApprovalRoute);
   }, [isApprovalRoute]);
 
+  const isCommonCodePage = pathname.startsWith("/dashboard/system/common-code");
+  const isSystemRoute = pathname.startsWith("/dashboard/system");
+  const [isSystemOpen, setIsSystemOpen] = useState(isSystemRoute);
+
   useEffect(() => {
-    setIsEmployeeOpen(isEmployeeRoute);
-  }, [isEmployeeRoute]);
+    setIsSystemOpen(isSystemRoute);
+  }, [isSystemRoute]);
 
   return (
     <aside className={styles.sidebar}>
@@ -286,14 +290,51 @@ export default function DashboardSidebar() {
         <p className={`${styles.menuTitle} ${styles.adminTitle}`}>ADMIN</p>
 
         {/* 시스템 관리 */}
-        <button type="button" className={styles.sideLink}>
-          <span className={styles.iconBox}>
-            <SidebarIcon name="system" />
-          </span>
+        <div className={styles.menuGroup}>
+          <button
+            type="button"
+            className={`${styles.sideLink} ${
+              isSystemRoute || isSystemOpen ? styles.groupActive : ""
+            }`}
+            onClick={() => setIsSystemOpen((previous) => !previous)}
+            aria-expanded={isSystemOpen}
+            aria-controls="system-management-submenu"
+          >
+            <span className={styles.iconBox}>
+              <SidebarIcon name="system" />
+            </span>
 
-          <span className={styles.menuLabel}>시스템 관리</span>
-          <span className={styles.arrow}>⌄</span>
-        </button>
+            <span className={styles.menuLabel}>시스템 관리</span>
+
+            <span
+              className={`${styles.arrow} ${
+                isSystemOpen ? styles.arrowOpen : ""
+              }`}
+              aria-hidden="true"
+            >
+              ⌄
+            </span>
+          </button>
+
+          <div
+            id="system-management-submenu"
+            className={`${styles.subMenu} ${
+              isSystemOpen ? styles.subMenuOpen : ""
+            }`}
+          >
+            <Link href="/dashboard/system/user-permission" className="">
+              사용자 권한 관리
+            </Link>
+
+            <Link
+              href="/dashboard/system/common-code"
+              className={isCommonCodePage ? styles.subMenuActive : ""}
+              aria-current={isCommonCodePage ? "page" : undefined}
+            >
+              공통 코드 관리
+            </Link>
+          </div>
+        </div>
       </nav>
     </aside>
   );

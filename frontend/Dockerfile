@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 
+ENV BACKEND_URL=http://backend:8080
+
 COPY . .
 RUN npm run build
 
@@ -13,6 +15,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV BACKEND_URL=http://backend:8080
 
 COPY --from=builder /app/package.json /app/package-lock.json ./
 COPY --from=builder /app/node_modules ./node_modules

@@ -1,0 +1,99 @@
+@use "../../../styles/variables" as *;
+
+.topHeader {
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 28px;
+  background: linear-gradient(90deg, #1d4a84, $color-navy-900);
+}
+
+.search {
+  width: min(420px, 50%);
+  height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-inline: 16px;
+  border: 1px solid rgba($color-surface, 0.18);
+  border-radius: $radius-sm;
+  background: rgba($color-surface, 0.1);
+
+  > span {
+    color: rgba($color-surface, 0.75);
+    font-size: 1.25rem;
+  }
+
+  input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    color: $color-surface;
+    background: transparent;
+
+    &::placeholder {
+      color: rgba($color-surface, 0.58);
+    }
+  }
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notificationButton {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  background: rgba($color-surface, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $color-surface;
+  transition: background 200ms ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: rgba($color-surface, 0.2);
+  }
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: $color-surface;
+
+  > span {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: $radius-sm;
+    background: linear-gradient(135deg, $color-blue-500, $color-cyan-400);
+    font-weight: 900;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  small {
+    margin-top: 3px;
+    color: rgba($color-surface, 0.55);
+    font-size: 0.68rem;
+  }
+}
