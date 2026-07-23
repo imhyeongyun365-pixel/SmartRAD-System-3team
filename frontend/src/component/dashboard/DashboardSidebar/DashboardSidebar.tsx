@@ -73,20 +73,44 @@ function SidebarIcon({ name }: SidebarIconProps) {
 export default function DashboardSidebar() {
   const pathname = usePathname();
 
+  // 1. 먼저 각 페이지 여부 계산
   const isDashboardPage = pathname === "/dashboard";
-
   const isApprovalInboxPage = pathname.startsWith("/dashboard/approvals");
-
   const isDraftDocumentsPage = pathname.startsWith("/dashboard/drafts");
+  const isEmployeePage = pathname.startsWith("/dashboard/employees");
+  const isOrganizationPage = pathname.startsWith("/dashboard/organization"); // ← 여기
+  const isAppointmentPage = pathname.startsWith("/dashboard/appointments");
+  const isDutyPage = pathname.startsWith("/dashboard/duty");
+  const isAttendanceLinkPage = pathname.startsWith(
+    "/dashboard/attendance-link",
+  );
+  const isAttendancePage =
+    pathname.startsWith("/dashboard/attendance") &&
+    !pathname.startsWith("/dashboard/attendance-link");
+  const isLeavePage = pathname.startsWith("/dashboard/leave");
 
+  // 2. 그 다음에 조합해서 사용
   const isApprovalRoute = isApprovalInboxPage || isDraftDocumentsPage;
+  const isEmployeeRoute =
+    isEmployeePage ||
+    isOrganizationPage ||
+    isAppointmentPage ||
+    isDutyPage ||
+    isAttendancePage ||
+    isAttendanceLinkPage; // ← 이제 사용 가능
 
+  // 3. state
   const [isApprovalOpen, setIsApprovalOpen] = useState(isApprovalRoute);
+  const [isEmployeeOpen, setIsEmployeeOpen] = useState(isEmployeeRoute);
 
   // 결재 대기함 또는 기안 문서함에 들어가면 자동으로 펼침
   useEffect(() => {
     setIsApprovalOpen(isApprovalRoute);
   }, [isApprovalRoute]);
+
+  useEffect(() => {
+    setIsEmployeeOpen(isEmployeeRoute);
+  }, [isEmployeeRoute]);
 
   return (
     <aside className={styles.sidebar}>
@@ -169,14 +193,85 @@ export default function DashboardSidebar() {
         </div>
 
         {/* 인사관리 */}
-        <button type="button" className={styles.sideLink}>
-          <span className={styles.iconBox}>
-            <SidebarIcon name="employee" />
-          </span>
+        <div className={styles.menuGroup}>
+          <button
+            type="button"
+            className={`${styles.sideLink} ${
+              isEmployeeRoute || isEmployeeOpen ? styles.groupActive : ""
+            }`}
+            onClick={() => setIsEmployeeOpen((prev) => !prev)}
+            aria-expanded={isEmployeeOpen}
+          >
+            <span className={styles.iconBox}>
+              <SidebarIcon name="employee" />
+            </span>
+            <span className={styles.menuLabel}>인사관리</span>
+            <span
+              className={`${styles.arrow} ${isEmployeeOpen ? styles.arrowOpen : ""}`}
+              aria-hidden="true"
+            >
+              ⌄
+            </span>
+          </button>
 
-          <span className={styles.menuLabel}>인사관리</span>
-          <span className={styles.arrow}>⌄</span>
-        </button>
+          <div
+            className={`${styles.subMenu} ${isEmployeeOpen ? styles.subMenuOpen : ""}`}
+          >
+            <Link
+              href="/dashboard/employees"
+              className={isEmployeePage ? styles.subMenuActive : ""}
+              aria-current={isEmployeePage ? "page" : undefined}
+            >
+              직원관리
+            </Link>
+
+            <Link
+              href="/dashboard/organization"
+              className={isOrganizationPage ? styles.subMenuActive : ""}
+              aria-current={isOrganizationPage ? "page" : undefined}
+            >
+              조직관리
+            </Link>
+
+            <Link
+              href="/dashboard/appointments"
+              className={isAppointmentPage ? styles.subMenuActive : ""}
+              aria-current={isAppointmentPage ? "page" : undefined}
+            >
+              인사발령 관리
+            </Link>
+
+            <Link
+              href="/dashboard/duty"
+              className={isDutyPage ? styles.subMenuActive : ""}
+              aria-current={isDutyPage ? "page" : undefined}
+            >
+              듀티표 편성
+            </Link>
+
+            <Link
+              href="/dashboard/attendance"
+              className={isAttendancePage ? styles.subMenuActive : ""}
+              aria-current={isAttendancePage ? "page" : undefined}
+            >
+              출퇴근 관리
+            </Link>
+
+            <Link
+              href="/dashboard/attendance-link"
+              className={isAttendanceLinkPage ? styles.subMenuActive : ""}
+            >
+              근태 연동
+            </Link>
+
+            <Link
+              href="/dashboard/leave"
+              className={isLeavePage ? styles.subMenuActive : ""}
+            >
+              휴가 관리
+            </Link>
+          </div>
+        </div>
 
         {/* 급여관리 */}
         <button type="button" className={styles.sideLink}>
